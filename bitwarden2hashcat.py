@@ -9,7 +9,7 @@
 #
 # Proudly brought to you by 0x6470 <https://github.com/0x6470/bitwarden2hashcat>
 #
-# The extraction process from browser is buggy, errors are to be expected
+# The extraction process from browsers is buggy, errors are to be expected
 #
 # For licensing details, see LICENSE file
 
