@@ -15,6 +15,7 @@
 
 import json
 import os
+import sys
 import base64
 
 
@@ -75,7 +76,7 @@ def extract_webbrowsers():
         import plyvel
     except ImportError:
         print("Please install the plyvel module")
-        exit()
+        sys.exit()
 
     for path in paths:
         try:
@@ -84,13 +85,13 @@ def extract_webbrowsers():
             continue
         except plyvel._plyvel.IOError:
             print("Please close the browser first")
-            exit()
+            sys.exit()
         try:
             email = db.get(b"userEmail").decode().strip("\"")
             keyHash = db.get(b"keyHash").decode().strip("\"")
             iterations = db.get(b"kdfIterations").decode().strip("\"")
         except Exception:
-            print("Something in the structure changed, please create an issue")
+            print("Something in the structure changed, try to open and close the browser and if that fails please create an issue\n")
             return None
         return email, keyHash, iterations
 
@@ -112,13 +113,13 @@ def extract_webbrowsers():
             data = cursor.execute("SELECT * FROM object_data;").fetchall()
         except sqlite3.OperationalError:
             print("Please close the browser first")
-            exit()
+            sys.exit()
         try:
             iterations = int.from_bytes(data[9][4].strip(b"\xff").split(b"\xff")[-1].split(b"\x00")[0], byteorder="little")  # very strange structure, might vary in the future
             keyHash = data[10][4].strip(b"\xff").split(b"\xff")[-1].split(b"\x00")[0].decode()
             email = data[21][4].strip(b"\xff").split(b"\xff")[-1].split(b"\x00")[0].decode()
         except Exception:
-            print("Something in the structure changed, please create an issue")
+            print("Something in the structure changed, try to open and close the browser and if that fails please create an issue\n")
             return None
         return email, keyHash, iterations
 
@@ -132,17 +133,32 @@ def get_data(file):
     return email, keyHash, iterations
 
 
-def format_data(data):
-    return "\n$bitwarden$1*{}*{}*{}".format(data[2], base64.b64encode(data[0].encode()).decode(), data[1])
+def process(path=None):
+    data = None
+    if path:
+        try:
+            data = get_data(path)
+        except FileNotFoundError:
+            print("File not found... trying other methods")
 
-
-if __name__== "__main__":
-    if "nt" in os.name:
-        data = extract_windows()
-        if not data:
-            data = extract_webbrowsers()
-    else:
+    if not data:
         data = extract_webbrowsers()
     if not data:
         data = manual_extraction()
-    print(format_data(data))
+    return data
+
+
+def format_data(data):
+    return "$bitwarden$1*{}*{}*{}".format(data[2], base64.b64encode(data[0].encode()).decode(), data[1])
+
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        if "*" in sys.argv[1]:
+            from glob import glob
+            for i in glob(sys.argv[1]):
+                print(format_data(process(i)))
+        else:
+            print(format_data(process(sys.argv[1])))
+    else:
+        print(format_data(process()))
