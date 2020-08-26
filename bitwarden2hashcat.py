@@ -12,6 +12,11 @@
 # The extraction process from browsers is buggy, errors are to be expected
 #
 # For licensing details, see LICENSE file
+#
+# Usage:
+# python3 bitwarden2hashcat.py data.json
+# python3 bitwarden2hashcat.py *.json
+
 
 import json
 import os
@@ -139,7 +144,7 @@ def process(path=None):
         try:
             data = get_data(path)
         except FileNotFoundError:
-            print("File not found... trying other methods")
+            print("File {} not found... trying other methods".format(path))
 
     if not data:
         data = extract_webbrowsers()
@@ -158,7 +163,12 @@ if __name__ == "__main__":
             from glob import glob
             for i in glob(sys.argv[1]):
                 print(format_data(process(i)))
+
+        if len(sys.argv) > 2:
+            for i in sys.argv[1:]:
+                print(format_data(process(i)))
         else:
             print(format_data(process(sys.argv[1])))
+
     else:
         print(format_data(process()))
