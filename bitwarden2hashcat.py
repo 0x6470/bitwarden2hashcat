@@ -74,7 +74,9 @@ def extract_webbrowsers():
     else:
         userprofile = os.getenv("HOME")
         paths = [
-            "{}/.config/google-chrome/Default/Local Extension Settings/nngceckbapebfimnlniiiahkandclblb".format(userprofile)  # Chrome
+            "{}/.config/google-chrome/Default/Local Extension Settings/nngceckbapebfimnlniiiahkandclblb".format(userprofile),  # Chrome
+            "{}/snap/chromium/common/chromium/Default/Local Extension Settings/nngceckbapebfimnlniiiahkandclblb".format(userprofile)  # Chromium snap
+
         ]
 
     try:
