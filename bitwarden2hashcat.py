@@ -41,23 +41,23 @@ def extract_windows():
 
 
 def manual_extraction():
-    print("automatic data extraction failed")
-    print("here are the manual steps\n")
+    print("Automatic data extraction failed...")
+    print("Here are the manual steps\n")
     print("Firefox: navigate to about:debugging#/runtime/this-firefox")
-    print("click \"inspect\" at the Bitwarden entry")
-    print("click \"extension storage\" in the storage tab")
+    print("Click \"inspect\" at the Bitwarden entry")
+    print("Click \"extension storage\" in the storage tab")
     print("")
     print("Chrome: navigate to chrome://extensions/")
-    print("turn the developer mode on")
-    print("click \"Inspect views background.html\" at the Bitwarden entry")
-    print("open the console tab")
-    print("enter \" chrome.storage.local.get(null, function (data) { console.info(data) }); \"")
+    print("Turn the developer mode on")
+    print("Click \"Inspect views background.html\" at the Bitwarden entry")
+    print("Open the console tab")
+    print("Enter \" chrome.storage.local.get(null, function (data) { console.info(data) }); \"")
     print("")
-    print("those instructions apply to all chromium based browsers such as Vivaldi, Opera, Brave and the new Edge")
+    print("Those instructions apply to all chromium based browsers such as Vivaldi, Opera, Brave and the new Edge")
     print("\n\n")
-    keyHash = input("search for the value of the \"keyHash\" key and enter it here: ")
-    kdfIterations = input("search for the value of the \"kdfIterations\" key and enter it here: ")
-    userEmail = input("search for the value of the \"userEmail\" key and enter it here: ")
+    keyHash = input("Search for the value of the \"keyHash\" key and enter it here: ")
+    kdfIterations = input("Search for the value of the \"kdfIterations\" key and enter it here: ")
+    userEmail = input("Search for the value of the \"userEmail\" key and enter it here: ")
     return userEmail, keyHash, kdfIterations
 
 
@@ -76,7 +76,6 @@ def extract_webbrowsers():
         paths = [
             "{}/.config/google-chrome/Default/Local Extension Settings/nngceckbapebfimnlniiiahkandclblb".format(userprofile),  # Chrome
             "{}/snap/chromium/common/chromium/Default/Local Extension Settings/nngceckbapebfimnlniiiahkandclblb".format(userprofile)  # Chromium snap
-
         ]
 
     try:
@@ -156,11 +155,12 @@ def process(path=None):
 
 
 def format_data(data):
-    return "$bitwarden$1*{}*{}*{}".format(data[2], base64.b64encode(data[0].encode()).decode(), data[1])
+    return "$bitwarden$1*{}*{}*{}".format(data[2], base64.b64encode(data[0].encode()).decode(), data[1])  # only Version 1 while Version 2 isn't implmented in Hashcat
 
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
+        # Wildcard handling
         if "*" in sys.argv[1]:
             from glob import glob
             for i in glob(sys.argv[1]):
