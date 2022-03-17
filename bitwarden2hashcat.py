@@ -155,7 +155,7 @@ def process(path=None):
 
 
 def format_data(data):
-    return "$bitwarden$1*{}*{}*{}".format(data[2], base64.b64encode(data[0].encode()).decode(), data[1])  # only Version 1 while Version 2 isn't implmented in Hashcat
+    return "$bitwarden$2*{}*{}*{}".format(data[2], base64.b64encode(data[0].encode()).decode(), data[1])  # version 2, see https://github.com/hashcat/hashcat/pull/3202
 
 
 if __name__ == "__main__":
